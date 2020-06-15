@@ -26,18 +26,36 @@ class PropertyController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'country' => 'required|max:30|alpha',
+            'country' => 'required|max:30',
             'guid' => 'required|unique:properties|uuid',
-            'state' => 'required|max:50|alpha',
-            'suburb' => 'required|max:20|alpha',
+            'state' => 'required|max:50',
+            'suburb' => 'required|max:20',
         ]);
 
-        return Property::create($request->only([
-            'guid',
-            'state',
-            'suburb',
-            'country',
-        ]));
+        try {
+            $property = Property::create($request->only([
+                'guid',
+                'state',
+                'suburb',
+                'country',
+            ]));
+
+            logger('Property saved', [
+                'id' => $property->id,
+                'country' => $property->country,
+                'state' => $property->state,
+                'suburb' => $property->suburb,
+                'guid' => $property->guid,
+            ]);
+
+            return $property;
+        } catch (Exception $e) {
+            logger()->error('Property save failed', [
+                'message' => $e->getMessage(),
+            ]);
+
+            abort(500, 'Property save failed');
+        }
     }
 
     /**

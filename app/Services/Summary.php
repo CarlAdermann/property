@@ -13,13 +13,16 @@ class Summary
         $analytics = $this->getAnalyticsQuery($filters);
 
         $total = $properties->count();
+        // 'has value' is considered to be a property that has an existing analytic record
+        $hasTotal = $properties->has('analytics')->count();
+        $doesntHaveTotal = $total - $hasTotal;
 
         return [
             'min' => $analytics->min('value'),
             'max' => $analytics->max('value'),
             'median' => $analytics->average('value'),
-            'with_value_percent' => $this->percent($properties->has('analytics')->count(), $total),
-            'without_value_percent' => $this->percent($properties->doesntHave('analytics')->count(), $total),
+            'with_value_percent' => $this->percent($hasTotal, $total),
+            'without_value_percent' => $this->percent($doesntHaveTotal, $total),
         ];
     }
 
