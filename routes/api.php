@@ -22,6 +22,7 @@ Route::apiResource('property', 'PropertyController')->only([
 ]);
 Route::apiResource('property.analytics', 'PropertyAnalyticController')->only([
     'index',
+    'store',
     'update',
     'destroy',
 ])->shallow();
